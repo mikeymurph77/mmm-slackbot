@@ -13,11 +13,14 @@ post '/gateway' do
     when 'issues'
       resp = HTTParty.get(repo_url)
       resp = JSON.parse resp.body
-      respond_message "There are #{resp['open_issues_count']} open issues on #{repo}"
+      respond_message("There are #{resp['open_issues_count']} open issues on #{repo}", resp['avatar_url'])
   end
 end
 
-def respond_message message
+def respond_message(message, img_url=nil)
   content_type :json
-  {:text => message}.to_json
+  {
+    :text => message,
+    :image_url => img_url
+  }.to_json
 end
