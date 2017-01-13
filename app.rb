@@ -9,29 +9,29 @@ post '/gateway' do
   action, repo = message.split('_').map {|c| c.strip.downcase }
 
   case action
-    when 'issues'
-      repo_url = "https://api.github.com/repos/#{repo}"
-      resp = HTTParty.get(repo_url)
-      resp = JSON.parse resp.body
-      respond_message("There are #{resp['open_issues_count']} open issues on #{repo}")
-    when 'advice'
-      repo_url = "http://api.adviceslip.com/advice"
-      resp = HTTParty.get(repo_url)
-      resp = JSON.parse resp.body
-      respond_message("*Your tip:* \n #{resp['advice']}")
-    when 'github status', 'ghs', 'gh status'
-      repo_url = "https://status.github.com/api/last-message.json"
-      resp = HTTParty.get(repo_url)
-      resp = JSON.parse resp.body
-      emoji = case resp['status']
-        when 'good'
-          ':ok_hand:'
-        when 'minor'
-          ':warning:'
-        when 'major'
-          ':red_circle:'
-      end
-      respond_message("*Status:* #{resp['status']} #{emoji.present? ? emoji : ''} \n #{resp['body']}")
+  when 'issues'
+    repo_url = "https://api.github.com/repos/#{repo}"
+    resp = HTTParty.get(repo_url)
+    resp = JSON.parse resp.body
+    respond_message("There are #{resp['open_issues_count']} open issues on #{repo}")
+  when 'advice'
+    repo_url = "http://api.adviceslip.com/advice"
+    resp = HTTParty.get(repo_url)
+    resp = JSON.parse resp.body
+    respond_message("*Your tip:* #{resp['advice']}")
+  when 'github status'
+    repo_url = "https://status.github.com/api/last-message.json"
+    resp = HTTParty.get(repo_url)
+    resp = JSON.parse resp.body
+    case resp['status']
+    when 'good'
+      emoji = ':ok_hand:'
+    when 'minor'
+      emoji = ':warning:'
+    when 'major'
+      emoji = ':red_circle:'
+    end
+    respond_message("*Status:* #{resp['status']} #{emoji.present? ? emoji : ''} \n #{resp['body']}")
   end
 end
 
