@@ -13,19 +13,21 @@ post '/gateway' do
       repo_url = "https://api.github.com/repos/#{repo}"
       resp = HTTParty.get(repo_url)
       resp = JSON.parse resp.body
-      respond_message("There are #{resp['open_issues_count']} open issues on #{repo}", resp['avatar_url'])
+      respond_message("There are #{resp['open_issues_count']} open issues on #{repo}")
     when 'advice'
       repo_url = "http://api.adviceslip.com/advice"
       resp = HTTParty.get(repo_url)
       resp = JSON.parse resp.body
       respond_message("*Your tip:* \n resp['advice']")
+    when 'github status'
+      repo_url = "https://status.github.com/api/last-message.json"
+      resp = HTTParty.get(repo_url)
+      resp = JSON.parse resp.body
+      respond_message("*Status:* _#{resp['status']}_ \n #{resp['body']}")
   end
 end
 
-def respond_message(message, img_url=nil)
+def respond_message(message)
   content_type :json
-  {
-    :text => message,
-    :image_url => img_url
-  }.to_json
+  { text: message }.to_json
 end
